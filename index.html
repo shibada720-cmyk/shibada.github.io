@@ -19,7 +19,7 @@
         /* Latest Video Card */
         .latest-box { background: var(--card-bg); padding: 25px; border-radius: 20px; border: 1px solid #333; box-shadow: 0 20px 40px rgba(0,0,0,0.8); transition: 0.3s; }
         .latest-box:hover { border-color: var(--main-red); }
-        .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px; }
+        .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px; background: #000; }
         .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
         
         h2 { font-size: 2rem; border-left: 6px solid var(--main-red); padding-left: 15px; margin: 50px 0 30px; text-transform: uppercase; }
@@ -28,10 +28,10 @@
         #video-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
         .song-card { background: var(--card-bg); border-radius: 15px; overflow: hidden; border: 1px solid #222; transition: 0.3s; }
         .song-card:hover { transform: translateY(-10px); border-color: var(--main-red); }
-        .song-card p { padding: 15px; margin: 0; font-weight: bold; font-size: 0.95rem; }
+        .song-card p { padding: 15px; margin: 0; font-weight: bold; font-size: 0.95rem; text-align: center; }
 
         /* Social Buttons */
-        .btn { display: inline-block; background: var(--main-red); color: #white; padding: 12px 30px; border-radius: 50px; text-decoration: none; font-weight: bold; margin-top: 20px; transition: 0.3s; border: 2px solid var(--main-red); }
+        .btn { display: inline-block; background: var(--main-red); color: white; padding: 12px 30px; border-radius: 50px; text-decoration: none; font-weight: bold; margin-top: 20px; transition: 0.3s; border: 2px solid var(--main-red); }
         .btn:hover { background: transparent; color: var(--main-red); }
 
         footer { text-align: center; padding: 50px; color: #555; border-top: 1px solid #222; }
@@ -41,7 +41,7 @@
 
     <header>
         <h1>ROCKVANA</h1>
-        <p class="tagline">সুর যখন কথা বলে, হৃদয় তখন কাঁদে,তখন আমি আছি পাসে </p>
+        <p class="tagline">সুর যখন কথা বলে, হৃদয় তখন কাঁদে,তখন এই গান আছে পাসে </p>
         <a href="https://www.youtube.com/@rockvana?sub_confirmation=1" target="_blank" class="btn">SUBSCRIBE ON YOUTUBE</a>
     </header>
 
@@ -61,9 +61,9 @@
     </footer>
 
     <script>
-        // আপনার অরিজিনাল চ্যানেল আইডি
         const channelID = "UCmQw7sXJGhLhCVCltmxuRIg";
-        const apiURL = "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent("https://www.youtube.com/feeds/videos.xml?channel_id=" + channelID);
+        // 't' প্যারামিটার যোগ করা হয়েছে যাতে ব্রাউজার ক্যাশ থেকে পুরনো ডাটা না দেখায় (Cache Clear)
+        const apiURL = "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent("https://www.youtube.com/feeds/videos.xml?channel_id=" + channelID) + "&t=" + new Date().getTime();
 
         fetch(apiURL)
             .then(res => res.json())
@@ -71,21 +71,25 @@
                 const items = data.items;
                 if(items && items.length > 0) {
                     // ১. লেটেস্ট ভিডিও সেট করা
-                    const mainId = items[0].link.split('v=')[1];
+                    const mainLink = items[0].link;
+                    const mainId = mainLink.includes('v=') ? mainLink.split('v=')[1].split('&')[0] : mainLink.split('/').pop();
+                    
                     document.getElementById('main-video-container').innerHTML = `
                         <div class="video-wrapper">
-                            <iframe src="https://www.youtube.com/embed/${mainId}?autoplay=0" allowfullscreen></iframe>
+                            <iframe src="https://www.youtube.com/embed/${mainId}" allowfullscreen></iframe>
                         </div>
-                        <h3 style="margin-top:20px; color: #ff0000;">${items[0].title}</h3>
+                        <h3 style="margin-top:20px; color: #ff0000; text-align:center;">${items[0].title}</h3>
                     `;
 
-                    // ২. বাকি ভিডিওগুলো গ্রিডে দেখানো
+                    // ২. বাকি ভিডিওগুলো গ্রিডে দেখানো (সব ভিডিওর জন্য লুপ)
                     let gridHTML = '';
                     for(let i = 1; i < items.length; i++) {
-                        const vId = items[i].link.split('v=')[1];
+                        const link = items[i].link;
+                        const vId = link.includes('v=') ? link.split('v=')[1].split('&')[0] : link.split('/').pop();
+                        
                         gridHTML += `
                             <div class="song-card">
-                                <div class="video-wrapper" style="padding-bottom: 56.25%;">
+                                <div class="video-wrapper">
                                     <iframe src="https://www.youtube.com/embed/${vId}" allowfullscreen></iframe>
                                 </div>
                                 <p>${items[i].title}</p>
@@ -93,10 +97,13 @@
                         `;
                     }
                     document.getElementById('video-grid').innerHTML = gridHTML;
+                } else {
+                    document.getElementById('main-video-container').innerHTML = "কোনো গান খুঁজে পাওয়া যায়নি।";
                 }
             })
             .catch(err => {
-                document.getElementById('main-video-container').innerHTML = "ভিডিও লোড করা যাচ্ছে না। নেট কানেকশন চেক করুন।";
+                console.error(err);
+                document.getElementById('main-video-container').innerHTML = "ভিডিও লোড হতে সমস্যা হচ্ছে। দয়া করে পেজটি রিফ্রেশ করুন।";
             });
     </script>
 </body>
