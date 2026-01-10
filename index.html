@@ -1,67 +1,23 @@
-<!DOCTYPE html>
-<html lang="bn">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ROCKVANA | Official Website</title>
-    <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0f0f0f; color: #fff; text-align: center; margin: 0; padding: 0; }
-        header { background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://via.placeholder.com/1500x500'); background-size: cover; padding: 80px 20px; border-bottom: 3px solid #ff0000; }
-        h1 { font-size: 3.5rem; letter-spacing: 5px; color: #ff0000; margin: 0; text-transform: uppercase; }
-        p.subtitle { font-size: 1.2rem; color: #ccc; margin-top: 10px; }
-        .container { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
-        .video-card { background: #1a1a1a; padding: 20px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-bottom: 40px; }
-        iframe { border-radius: 10px; width: 100%; aspect-ratio: 16/9; border: none; }
-        h2 { border-left: 5px solid #ff0000; padding-left: 15px; text-align: left; }
-        .subscribe-btn { display: inline-block; background: #ff0000; color: #fff; padding: 15px 30px; text-decoration: none; font-weight: bold; border-radius: 30px; margin-top: 20px; transition: 0.3s; }
-        .subscribe-btn:hover { background: #cc0000; transform: scale(1.05); }
-        #video-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 30px; }
-        .small-video { background: #1a1a1a; padding: 10px; border-radius: 10px; }
-        footer { padding: 40px; color: #666; font-size: 0.9rem; }
-    </style>
-</head>
-<body>
+<script>
+    // আপনার অরিজিনাল Rockvana চ্যানেল আইডি এখানে বসানো হলো
+    const channelID = "UCmQw7sXJGhLhCVCltmxuRIg"; 
+    const proxyUrl = "https://api.rss2json.com/v1/api.json?rss_url=";
+    const feedUrl = encodeURIComponent("https://www.youtube.com/feeds/videos.xml?channel_id=" + channelID);
 
-    <header>
-        <h1>ROCKVANA</h1>
-        <p class="subtitle">সুর যখন কথা বলে, হৃদয় তখন কাঁদে</p>
-        <a href="https://www.youtube.com/@rockvana?sub_confirmation=1" target="_blank" class="subscribe-btn">SUBSCRIBE ON YOUTUBE</a>
-    </header>
-
-    <div class="container">
-        <h2>Latest Release</h2>
-        <div class="video-card" id="main-video">
-            <p>গানের মিছিলে আপনাকে স্বাগতম... লোড হচ্ছে...</p>
-        </div>
-
-        <h2>More From Rockvana</h2>
-        <div id="video-list">
-            </div>
-    </div>
-
-    <footer>
-        <p>&copy; 2026 ROCKVANA MUSIC. All Rights Reserved.</p>
-    </footer>
-
-    <script>
-        // আপনার চ্যানেল আইডি এখানে দিন (আপনার বর্তমান আইডিটি আমি বসিয়ে দিচ্ছি)
-        const channelID = "UCxjk0jpZguFJuyrNM_EIP3w"; 
-        const proxyUrl = "https://api.rss2json.com/v1/api.json?rss_url=";
-        const feedUrl = encodeURIComponent("https://www.youtube.com/feeds/videos.xml?channel_id=" + channelID);
-
-        fetch(proxyUrl + feedUrl)
-            .then(res => res.json())
-            .then(data => {
-                const videos = data.items;
-                
-                // ১. লেটেস্ট ভিডিও সেট করা (Main Player)
+    fetch(proxyUrl + feedUrl)
+        .then(res => res.json())
+        .then(data => {
+            const videos = data.items;
+            
+            if(videos && videos.length > 0) {
+                // ১. লেটেস্ট ভিডিও সেট করা
                 const latestVideoId = videos[0].link.split('v=')[1];
                 document.getElementById('main-video').innerHTML = `
                     <iframe src="https://www.youtube.com/embed/${latestVideoId}" allowfullscreen></iframe>
-                    <h3>${videos[0].title}</h3>
+                    <h3 style="margin-top:15px;">${videos[0].title}</h3>
                 `;
 
-                // ২. অন্যান্য ভিডিও লিস্ট করা (Small Cards)
+                // ২. অন্যান্য ভিডিও লিস্ট করা
                 let videoHTML = '';
                 for(let i = 1; i < videos.length; i++) {
                     const vId = videos[i].link.split('v=')[1];
@@ -73,12 +29,10 @@
                     `;
                 }
                 document.getElementById('video-list').innerHTML = videoHTML;
-            })
-            .catch(err => {
-                console.error("ভিডিও লোড হতে সমস্যা হচ্ছে:", err);
-                document.getElementById('main-video').innerHTML = "ভিডিও লোড হতে পারছে না। দয়া করে আবার চেষ্টা করুন।";
-            });
-    </script>
-
-</body>
-</html>
+            }
+        })
+        .catch(err => {
+            console.error("Error:", err);
+            document.getElementById('main-video').innerHTML = "ভিডিও লোড হতে পারছে না।";
+        });
+</script>
