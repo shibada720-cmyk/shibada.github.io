@@ -3,76 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>আমার প্রিয় গান - Shibada</title>
-    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;700&display=swap" rel="stylesheet">
-    
+    <title>ROCKVANA | Official Website</title>
     <style>
-        body { 
-            font-family: 'Hind Siliguri', sans-serif; 
-            text-align: center; 
-            background: #121212; /* ডার্ক ব্যাকগ্রাউন্ড */
-            color: #ffffff;
-            margin: 0;
-            padding: 20px;
-        }
-        .card { 
-            background: #1e1e1e; 
-            padding: 30px; 
-            border-radius: 20px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
-            max-width: 700px;
-            margin: 40px auto;
-            border: 1px solid #333;
-        }
-        h1 { color: #ff0000; font-size: 2rem; margin-bottom: 10px; }
-        p { color: #bbbbbb; margin-bottom: 25px; }
-        
-        /* ভিডিওর সাইজ ঠিক করার জন্য */
-        .video-container {
-            position: relative;
-            padding-bottom: 56.25%; /* 16:9 রেশিও */
-            height: 0;
-            overflow: hidden;
-            border-radius: 12px;
-            background: #000;
-        }
-        .video-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-        
-        .footer {
-            margin-top: 30px;
-            font-size: 0.9rem;
-            color: #666;
-        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0f0f0f; color: #fff; text-align: center; margin: 0; padding: 0; }
+        header { background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://via.placeholder.com/1500x500'); background-size: cover; padding: 80px 20px; border-bottom: 3px solid #ff0000; }
+        h1 { font-size: 3.5rem; letter-spacing: 5px; color: #ff0000; margin: 0; text-transform: uppercase; }
+        p.subtitle { font-size: 1.2rem; color: #ccc; margin-top: 10px; }
+        .container { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
+        .video-card { background: #1a1a1a; padding: 20px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-bottom: 40px; }
+        iframe { border-radius: 10px; width: 100%; aspect-ratio: 16/9; border: none; }
+        h2 { border-left: 5px solid #ff0000; padding-left: 15px; text-align: left; }
+        .subscribe-btn { display: inline-block; background: #ff0000; color: #fff; padding: 15px 30px; text-decoration: none; font-weight: bold; border-radius: 30px; margin-top: 20px; transition: 0.3s; }
+        .subscribe-btn:hover { background: #cc0000; transform: scale(1.05); }
+        #video-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 30px; }
+        .small-video { background: #1a1a1a; padding: 10px; border-radius: 10px; }
+        footer { padding: 40px; color: #666; font-size: 0.9rem; }
     </style>
 </head>
 <body>
 
-    <div class="card">
-        <h1>আমার প্রিয় গান yo yo tuhin 🎵</h1>
-        <p>আপনার পছন্দের ভিডিওটি নিচে সরাসরি দেখুন</p>
-        
-        <div class="video-container">
-            <iframe 
-                src="https://www.youtube.com/embed/o-HGvxxUAfQ" 
-                title="YouTube video player" 
-                frameborder="0" 
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                referrerpolicy="strict-origin-when-cross-origin" 
-                allowfullscreen>
-            </iframe>
+    <header>
+        <h1>ROCKVANA</h1>
+        <p class="subtitle">সুর যখন কথা বলে, হৃদয় তখন কাঁদে</p>
+        <a href="https://www.youtube.com/@rockvana?sub_confirmation=1" target="_blank" class="subscribe-btn">SUBSCRIBE ON YOUTUBE</a>
+    </header>
+
+    <div class="container">
+        <h2>Latest Release</h2>
+        <div class="video-card" id="main-video">
+            <p>গানের মিছিলে আপনাকে স্বাগতম... লোড হচ্ছে...</p>
         </div>
+
+        <h2>More From Rockvana</h2>
+        <div id="video-list">
+            </div>
     </div>
 
-    <div class="footer">
-        © ২০২৪ | আমার ব্যক্তিগত ওয়েবসাইট
-    </div>
+    <footer>
+        <p>&copy; 2026 ROCKVANA MUSIC. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        // আপনার চ্যানেল আইডি এখানে দিন (আপনার বর্তমান আইডিটি আমি বসিয়ে দিচ্ছি)
+        const channelID = "UCxjk0jpZguFJuyrNM_EIP3w"; 
+        const proxyUrl = "https://api.rss2json.com/v1/api.json?rss_url=";
+        const feedUrl = encodeURIComponent("https://www.youtube.com/feeds/videos.xml?channel_id=" + channelID);
+
+        fetch(proxyUrl + feedUrl)
+            .then(res => res.json())
+            .then(data => {
+                const videos = data.items;
+                
+                // ১. লেটেস্ট ভিডিও সেট করা (Main Player)
+                const latestVideoId = videos[0].link.split('v=')[1];
+                document.getElementById('main-video').innerHTML = `
+                    <iframe src="https://www.youtube.com/embed/${latestVideoId}" allowfullscreen></iframe>
+                    <h3>${videos[0].title}</h3>
+                `;
+
+                // ২. অন্যান্য ভিডিও লিস্ট করা (Small Cards)
+                let videoHTML = '';
+                for(let i = 1; i < videos.length; i++) {
+                    const vId = videos[i].link.split('v=')[1];
+                    videoHTML += `
+                        <div class="small-video">
+                            <iframe src="https://www.youtube.com/embed/${vId}" frameborder="0" allowfullscreen></iframe>
+                            <p style="font-size: 0.9rem; margin-top:10px;">${videos[i].title}</p>
+                        </div>
+                    `;
+                }
+                document.getElementById('video-list').innerHTML = videoHTML;
+            })
+            .catch(err => {
+                console.error("ভিডিও লোড হতে সমস্যা হচ্ছে:", err);
+                document.getElementById('main-video').innerHTML = "ভিডিও লোড হতে পারছে না। দয়া করে আবার চেষ্টা করুন।";
+            });
+    </script>
 
 </body>
 </html>
