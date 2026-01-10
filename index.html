@@ -3,62 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ROCKVANA | Official Website</title>
+    <title>ROCKVANA | Official Music Portfolio</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0f0f0f; color: #fff; text-align: center; margin: 0; padding: 0; }
-        header { background: #1a1a1a; padding: 60px 20px; border-bottom: 3px solid #ff0000; }
-        h1 { font-size: 3rem; color: #ff0000; text-transform: uppercase; margin: 0; }
-        .container { max-width: 900px; margin: 30px auto; padding: 0 20px; }
-        .video-card { background: #222; padding: 15px; border-radius: 12px; margin-bottom: 30px; }
-        iframe { width: 100%; aspect-ratio: 16/9; border-radius: 8px; border: none; }
-        #video-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-        .small-video { background: #222; padding: 10px; border-radius: 10px; }
+        :root { --main-red: #ff0000; --bg-dark: #0a0a0a; --card-bg: #161616; }
+        body { background-color: var(--bg-dark); color: #ffffff; font-family: 'Segoe UI', Roboto, sans-serif; margin: 0; line-height: 1.6; }
+        
+        /* Header Section */
+        header { height: 60vh; display: flex; flex-direction: column; justify-content: center; align-items: center; background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1493225255756-d9584f8606e9?auto=format&fit=crop&w=1500&q=80'); background-size: cover; background-position: center; border-bottom: 4px solid var(--main-red); text-align: center; }
+        h1 { font-size: 4rem; margin: 0; letter-spacing: 8px; color: var(--main-red); text-shadow: 0 0 20px rgba(255,0,0,0.5); text-transform: uppercase; }
+        .tagline { font-size: 1.2rem; color: #bbb; margin-top: 10px; font-style: italic; }
+
+        /* Container */
+        .container { max-width: 1100px; margin: -50px auto 50px; padding: 0 20px; }
+        
+        /* Latest Video Card */
+        .latest-box { background: var(--card-bg); padding: 25px; border-radius: 20px; border: 1px solid #333; box-shadow: 0 20px 40px rgba(0,0,0,0.8); transition: 0.3s; }
+        .latest-box:hover { border-color: var(--main-red); }
+        .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px; }
+        .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+        
+        h2 { font-size: 2rem; border-left: 6px solid var(--main-red); padding-left: 15px; margin: 50px 0 30px; text-transform: uppercase; }
+
+        /* Grid for Other Videos */
+        #video-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
+        .song-card { background: var(--card-bg); border-radius: 15px; overflow: hidden; border: 1px solid #222; transition: 0.3s; }
+        .song-card:hover { transform: translateY(-10px); border-color: var(--main-red); }
+        .song-card p { padding: 15px; margin: 0; font-weight: bold; font-size: 0.95rem; }
+
+        /* Social Buttons */
+        .btn { display: inline-block; background: var(--main-red); color: #white; padding: 12px 30px; border-radius: 50px; text-decoration: none; font-weight: bold; margin-top: 20px; transition: 0.3s; border: 2px solid var(--main-red); }
+        .btn:hover { background: transparent; color: var(--main-red); }
+
+        footer { text-align: center; padding: 50px; color: #555; border-top: 1px solid #222; }
     </style>
 </head>
 <body>
 
     <header>
         <h1>ROCKVANA</h1>
-        <p>সুর যখন কথা বলে, হৃদয় তখন কাঁদে</p>
+        <p class="tagline">সুর যখন কথা বলে, হৃদয় তখন কাঁদে,আমি আছি তোমাদের পাসে গান শোনাতে </p>
+        <a href="https://www.youtube.com/@rockvana?sub_confirmation=1" target="_blank" class="btn">SUBSCRIBE ON YOUTUBE</a>
     </header>
 
     <div class="container">
         <h2>Latest Release</h2>
-        <div id="main-video" class="video-card">Loading...</div>
+        <div id="main-video-container" class="latest-box">
+            <p style="text-align: center;">Rockvana'র গান লোড হচ্ছে... একটু অপেক্ষা করুন।</p>
+        </div>
 
-        <h2>Previous Songs</h2>
-        <div id="video-list"></div>
+        <h2>More Tracks</h2>
+        <div id="video-grid">
+            </div>
     </div>
 
-    <script>
-        // Apnar Rockvana channel ID
-        const channelID = "UCmQw7sXJGhLhCVCltmxuRIg"; 
-        const feedUrl = "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent("https://www.youtube.com/feeds/videos.xml?channel_id=" + channelID);
+    <footer>
+        <p>&copy; 2026 ROCKVANA | Independent Music Artist</p>
+    </footer>
 
-        fetch(feedUrl)
+    <script>
+        // আপনার অরিজিনাল চ্যানেল আইডি
+        const channelID = "UCmQw7sXJGhLhCVCltmxuRIg";
+        const apiURL = "https://api.rss2json.com/v1/api.json?rss_url=" + encodeURIComponent("https://www.youtube.com/feeds/videos.xml?channel_id=" + channelID);
+
+        fetch(apiURL)
             .then(res => res.json())
             .then(data => {
-                const videos = data.items;
-                if(videos && videos.length > 0) {
-                    // Main video
-                    const mId = videos[0].link.split('v=')[1];
-                    document.getElementById('main-video').innerHTML = `
-                        <iframe src="https://www.youtube.com/embed/${mId}" allowfullscreen></iframe>
-                        <h3>${videos[0].title}</h3>`;
-                    
-                    // List videos
-                    let listHTML = '';
-                    for(let i = 1; i < videos.length; i++) {
-                        const vId = videos[i].link.split('v=')[1];
-                        listHTML += `<div class="small-video">
-                            <iframe src="https://www.youtube.com/embed/${vId}" allowfullscreen></iframe>
-                            <p>${videos[i].title}</p>
-                        </div>`;
+                const items = data.items;
+                if(items && items.length > 0) {
+                    // ১. লেটেস্ট ভিডিও সেট করা
+                    const mainId = items[0].link.split('v=')[1];
+                    document.getElementById('main-video-container').innerHTML = `
+                        <div class="video-wrapper">
+                            <iframe src="https://www.youtube.com/embed/${mainId}?autoplay=0" allowfullscreen></iframe>
+                        </div>
+                        <h3 style="margin-top:20px; color: #ff0000;">${items[0].title}</h3>
+                    `;
+
+                    // ২. বাকি ভিডিওগুলো গ্রিডে দেখানো
+                    let gridHTML = '';
+                    for(let i = 1; i < items.length; i++) {
+                        const vId = items[i].link.split('v=')[1];
+                        gridHTML += `
+                            <div class="song-card">
+                                <div class="video-wrapper" style="padding-bottom: 56.25%;">
+                                    <iframe src="https://www.youtube.com/embed/${vId}" allowfullscreen></iframe>
+                                </div>
+                                <p>${items[i].title}</p>
+                            </div>
+                        `;
                     }
-                    document.getElementById('video-list').innerHTML = listHTML;
+                    document.getElementById('video-grid').innerHTML = gridHTML;
                 }
             })
-            .catch(err => console.log("Error loading videos"));
+            .catch(err => {
+                document.getElementById('main-video-container').innerHTML = "ভিডিও লোড করা যাচ্ছে না। নেট কানেকশন চেক করুন।";
+            });
     </script>
 </body>
 </html>
